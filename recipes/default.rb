@@ -129,14 +129,6 @@ else
   end
 end
 
-if node.attribute?('ec2')
-  hostname = "--hostname #{node['ec2']['public_hostname']}"
-else
-  hostname = "--hostname #{node['ipaddress']}"
-end
-
-command_line_options_array << hostname
-
 template "#{node['chronos']['config_dir']}/chronos.conf" do
   source 'chronos.conf.erb'
   owner node['chronos']['user']

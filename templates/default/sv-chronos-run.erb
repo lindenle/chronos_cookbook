@@ -9,7 +9,7 @@ environment_directory=<%= "#{node['chronos']['home_dir']}/environment" %>
 config_file=<%= "#{node['chronos']['config_dir']}/chronos.conf" %>
 
 ip=$(ifconfig | grep inet | grep -v inet6 | grep -v '127.0.0.1' | awk -F: '{ print $2 }' | awk '{ print $1 }')
-
+ec2_hostname=$(ohai ec2 | grep public_hostname | awk '{print $2}' | sed -e s/[,\"]//g | head -1)
 # Setup the libprocess ip
 echo "$ip" > "$environment_directory"/LIBPROCESS_IP
 
@@ -21,6 +21,7 @@ jvm_options=( -cp "$app_jar" -server -Xmx"$heap" -Xms"$heap"
 if [[ -e $config_file ]]
 then
   cmd=$(< $config_file)
+  cmd="$cmd --hostname $ec2_hostname"
 fi
 
 app_options=( $cmd )
